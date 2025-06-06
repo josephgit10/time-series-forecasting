@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  forecasting:
+    build: .
+    container_name: forecasting_service
+    volumes:
+      - ./:/app
+    ports:
+      - "8000:8000"
+    command: uvicorn src.api:app --host 0.0.0.0 --port 8000
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: airflow_postgres
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    ports:
+      - "5432:5432"
+
+  airflow:
+    image: apache/airflow:2.9.0
+    container_name: airflow_service
+    depends_on:
+      - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__WEBSERVER__SECRET_KEY: joseph
+      _AIRFLOW_WWW_USER_USERNAME: admin
+      _AIRFLOW_WWW_USER_PASSWORD: admin123
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./:/app
+    ports:
+      - "8080:8080"
+    command: >
+      bash -c "
+      pip install --no-cache-dir -r /app/requirements.txt &&
+      airflow db upgrade &&
+      airflow users create --username admin --firstname Air --lastname Flow --role Admin --email admin@example.com --password admin123 &&
+      airflow webserver
+      "
+
+  airflow_scheduler:
+    image: apache/airflow:2.9.0
+    container_name: airflow_scheduler
+    depends_on:
+      - postgres
+      - airflow
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+      AIRFLOW__WEBSERVER__SECRET_KEY: joseph
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      - ./:/app
+    command: >
+      bash -c "
+      pip install --no-cache-dir -r /app/requirements.txt &&
+      airflow db upgrade &&
+      airflow scheduler
+      "

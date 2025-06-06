@@ -1,0 +1,14 @@
+pandas
+numpy
+prophet
+xgboost
+tensorflow
+keras
+apache-airflow==2.9.0
+fastapi
+uvicorn
+mlflow
+dvc
+scikit-learn
+psycopg2-binary
+sqlalchemy
