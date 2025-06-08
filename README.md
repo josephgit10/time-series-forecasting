@@ -1,4 +1,4 @@
-# Time‑Series Forecasting for Supply Chain Logistics
+# End-to-End Demand Forecasting System for Supply Chain Logistics
 
 > **Multi‑store weekly demand forecasting with Prophet, LSTM, XGBoost, Airflow orchestration, and a FastAPI micro‑service – fully containerised with Docker.**
 
