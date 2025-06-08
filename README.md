@@ -49,9 +49,9 @@ $ docker-compose up --build
 ### FastAPI service
 
 ```
-GET  /health         # → {"status":"ok"}
-POST /predict        # {"store_id":3,"ds":"2025-07-05"}
-                     # → {"forecast_sales":123456}
+GET /health # → {"status":"ok"}
+GET /forecast/{store_id} # e.g., /forecast/3
+# → Returns a JSON array of all weekly forecasts for the given store.
 ```
 
 Running standalone (without Docker):
