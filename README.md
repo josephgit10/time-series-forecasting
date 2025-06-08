@@ -21,7 +21,7 @@
 
 ```bash
 # 1 Clone
-$ git clone https://github.com/<you>/time-series-forecasting.git
+$ git clone https://github.com/josephgit10/time-series-forecasting.git
 $ cd time-series-forecasting
 
 # 2 Create env
