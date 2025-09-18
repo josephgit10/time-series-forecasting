@@ -12,3 +12,7 @@ dvc
 scikit-learn
 psycopg2-binary
 sqlalchemy
+optuna
+keras-tuner
+plotly
+dash

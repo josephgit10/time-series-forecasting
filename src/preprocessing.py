@@ -23,6 +23,25 @@ def load_and_merge():
     df = sales_df.merge(features_df, on=["Store", "Date"], how="left")
     df = df.merge(stores_df, on="Store", how="left")
 
+    # Sort by store and date to ensure correct feature calculation
+    df.sort_values(['Store', 'Date'], inplace=True)
+
+    # Feature Engineering
+    df['Year'] = df['Date'].dt.year
+    df['Month'] = df['Date'].dt.month
+    df['WeekOfYear'] = df['Date'].dt.isocalendar().week.astype(int)
+    df['DayOfYear'] = df['Date'].dt.dayofyear
+
+    df['Lag_1'] = df.groupby('Store')['Weekly_Sales'].shift(1)
+    df['Lag_4'] = df.groupby('Store')['Weekly_Sales'].shift(4)
+    df['Lag_52'] = df.groupby('Store')['Weekly_Sales'].shift(52)
+
+    df['Rolling_Mean_4'] = df.groupby('Store')['Weekly_Sales'].shift(1).rolling(window=4).mean()
+    df['Rolling_Std_4'] = df.groupby('Store')['Weekly_Sales'].shift(1).rolling(window=4).std()
+
+    df.fillna(0, inplace=True)
+
+
     # Ensure output folder exists
     processed_dir = "/app/data/processed"
     os.makedirs(processed_dir, exist_ok=True)
