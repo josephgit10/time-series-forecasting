@@ -20,9 +20,14 @@ with DAG(
         bash_command='python /app/src/preprocessing.py'
     )
 
-    forecast = BashOperator(
-        task_id='run_forecast',
-        bash_command='python /app/src/forecasting_pipeline.py'
-    )
+    models = ['prophet', 'xgboost', 'lstm']
+    forecast_tasks = []
 
-    preprocess >> forecast
+    for model in models:
+        forecast_task = BashOperator(
+            task_id=f'run_forecast_{model}',
+            bash_command=f'python /app/src/forecasting_pipeline.py --model {model}'
+        )
+        forecast_tasks.append(forecast_task)
+
+    preprocess >> forecast_tasks
